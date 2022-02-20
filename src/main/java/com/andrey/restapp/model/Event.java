@@ -15,6 +15,21 @@ public class Event {
     @OneToOne(fetch = FetchType.LAZY)
     private File file;
 
+    @JoinTable(
+            name = "users_event",
+            joinColumns = @JoinColumn(
+                    name = "user_id",
+                    referencedColumnName = "id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "events_id",
+                    referencedColumnName = "id"
+            )
+    )
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+
     public Event() {
     }
 

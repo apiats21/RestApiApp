@@ -14,6 +14,20 @@ public class File {
     @Column(name = "filename")
     private String fileName;
 
+    @JoinTable(
+            name = "event_file",
+            joinColumns = @JoinColumn(
+                    name = "event_id",
+                    referencedColumnName = "id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "file_id",
+                    referencedColumnName = "id"
+            )
+    )
+    @OneToOne(fetch = FetchType.LAZY)
+    private Event event;
+
     public File() {
     }
 

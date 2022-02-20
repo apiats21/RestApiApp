@@ -1,6 +1,7 @@
 package com.andrey.restapp.repository.hibernate;
 
 import com.andrey.restapp.model.File;
+import com.andrey.restapp.model.User;
 import com.andrey.restapp.repository.FileRepository;
 import com.andrey.restapp.utils.HibernateUtils;
 import org.hibernate.Session;
@@ -14,15 +15,20 @@ public class HibernateFileRepositoryImpl implements FileRepository {
 
     @Override
     public File getById(Long aLong) {
-
-        return null;
+        try {
+            Session session = HibernateUtils.getSessionFactory().openSession();
+            return session.get(File.class, aLong);
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
     @Override
     public File save(File file) {
 
-        try (Session session = HibernateUtils.getSession()) {
+        try{
 
+            Session session = HibernateUtils.getSession();
             Transaction transaction = session.beginTransaction();
             Long id = (Long) session.save(file);
             file.setId(id);
@@ -45,11 +51,26 @@ public class HibernateFileRepositoryImpl implements FileRepository {
 
     @Override
     public File update(File file) {
-        return null;
+
+        try (Session session = HibernateUtils.getSession()) {
+            Transaction transaction = session.beginTransaction();
+            File updFile = session.get(File.class, file.getId());
+            updFile.setFileName(file.getFileName());
+            session.update(updFile);
+            transaction.commit();
+            return file;
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
     @Override
     public void deleteById(Long aLong) {
-
+        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            File file = session.get(File.class, aLong);
+            session.delete(file);
+            transaction.commit();
+        }
     }
 }
